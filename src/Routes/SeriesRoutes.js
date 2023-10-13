@@ -7,5 +7,6 @@ router.get('/series', seriesController.getSeries);
 router.get('/series/:id', seriesController.getSeriesById);
 router.get('/series/name/:name', seriesController.getSeriesByName);
 router.get('/top-series', seriesController.getTopSeries);
+router.put('/series/deshabilitar/:id', seriesController.disableSerie);
 
 module.exports = router;

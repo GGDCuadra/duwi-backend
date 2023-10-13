@@ -46,7 +46,9 @@ const getSeries = async (req, res) => {
         deshabilitar: serie.deshabilitar
       };
     });
-    res.json(mappedSeries);
+    const seriesHabilitadas = mappedSeries.filter(serie => serie.deshabilitar !== 'deshabilitada');
+
+    res.json(seriesHabilitadas);
   } catch (err) {
     console.error('Error al obtener datos de la colección "SERIES":', err);
     res.status(500).send('Error interno del servidor');
@@ -133,5 +135,32 @@ const getSeriesByName = async (req, res) => {
     res.status(500).send('Error interno del servidor');
   }
 };
-    
-module.exports = { getSeries, getSeriesById, getSeriesByName, getTopSeries };
+
+//----Disable
+const disableSerie = async (req, res) => {
+  try {
+    const serieId = req.params.id;
+    const series = await loadSeriesFromDatabase();
+    const serie = series.find(serie => serie._id.toString() === serieId);
+
+    if (!serie) {
+      res.status(404).json({ error: 'Serie no encontrada' });
+      return;
+    }
+
+    serie.deshabilitar = 'Disabled';
+
+    const client = await MongoClient.connect(mongoURL, { useUnifiedTopology: true });
+    const db = client.db(dbName);
+    const collection = db.collection(collectionName);
+    await collection.updateOne({ _id: new ObjectId(serieId) }, { $set: { deshabilitar: 'Disabled' } });
+
+    res.json(serie);
+    client.close();
+  } catch (err) {
+    console.error('Error al deshabilitar la serie:', err);
+    res.status(500).send('Error interno del servidor');
+  }
+};
+
+module.exports = { getSeries, getSeriesById, getSeriesByName, getTopSeries, disableSerie };
