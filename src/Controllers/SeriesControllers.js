@@ -117,6 +117,7 @@ const getSeriesById = async (req, res) => {
   }
 };
 
+
 //---Name
 const getSeriesByName = async (req, res) => {
   const { name } = req.query;
@@ -133,5 +134,49 @@ const getSeriesByName = async (req, res) => {
     res.status(500).send('Error interno del servidor');
   }
 };
+
+const postSeries = async (req, res) => {
+  const { body } = req;
+  try {
+    const client = await MongoClient.connect(mongoURL, { useUnifiedTopology: true });
+    const db = client.db(dbName);
+    const collection = db.collection(collectionName);
+
+    const serie = {
+      id: body.id,
+      url: body.url,
+      name: body.name,
+      type: body.type,
+      language: body.language,
+      genres: body.genres.map((genre) => genre),
+      status: body.status,
+      runtime: body.runtime,
+      premiered: body.premiered,
+      officialSite: body.officialSite,
+      schedule: body.schedule,
+      rating: body.rating,
+      weight: body.weight,
+      network: body.network,
+      country: body.country,
+      webChannel: body.webChannel,
+      externals: body.externals,
+      image: body.image,
+      summary: body.summary,
+      updated: body.updated,
+      _links: body._links,
+      self: body._links.self.href,
+      previousepisode: body._links.previousepisode.href,
+      deshabilitar: body.deshabilitar,
+    };
+
+    await collection.insertOne(serie);
+    res.status(201).json({ message: 'Serie creada exitosamente' });
+
+    client.close();
+  } catch (err) {
+    console.error('Error al crear la serie:', err);
+    res.status(500).send('Error interno del servidor');
+  }
+};
     
-module.exports = { getSeries, getSeriesById, getSeriesByName, getTopSeries };
+module.exports = { getSeries, getSeriesById, getSeriesByName, getTopSeries, postSeries };

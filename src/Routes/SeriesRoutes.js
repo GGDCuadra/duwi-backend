@@ -7,5 +7,6 @@ router.get('/series/name', seriesController.getSeriesByName);
 router.get('/series', seriesController.getSeries);
 router.get('/series/:id', seriesController.getSeriesById);
 router.get('/top-series', seriesController.getTopSeries);
+router.post('/postSeries', seriesController.postSeries)
 
 module.exports = router;
