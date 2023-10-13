@@ -8,9 +8,13 @@ router.get('/movies/:id', moviesController.getMovieById);
 router.get('/movies/title/:title', moviesController.getMovieByTitle);
 router.get('/top-movies', moviesController.getTopMovies);
 router.get('/movies/genre/:genre', moviesController.getMoviesByGenre);
+router.get('/enabledMovies', moviesController.getEnabledMovies);
+router.get('/disableMovies', moviesController.getDisableMovies);
 
 
 router.post('/movies', moviesController.postMovie);
 router.put('/movies/:id', moviesController.putMovie);
+
+
 
 module.exports = router;
