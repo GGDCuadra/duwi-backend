@@ -1,7 +1,7 @@
-const mongose = require('mongoose');
+const mongoose = require('mongoose');
 const esquemaSeries = new mongoose.Schema({
 
-    id: Number,
+    _id: mongoose.Schema.Types.ObjectId,
     url: String,
     name: String,
     type: String,
@@ -51,6 +51,6 @@ const esquemaSeries = new mongoose.Schema({
     deshabilitar: String,
 });
 
-const Series = mongose.model('Series', esquemaSeries);
+const Series = mongoose.model('Series', esquemaSeries);
 
 module.exports = Series;
