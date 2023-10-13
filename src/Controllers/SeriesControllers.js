@@ -120,7 +120,7 @@ const getSeriesById = async (req, res) => {
 
 //---Name
 const getSeriesByName = async (req, res) => {
-  const { name } = req.params;
+  const { name } = req.query;
   try {
     const series = await loadSeriesFromDatabase();
     const serie = series.find(serie => serie.name === name );
