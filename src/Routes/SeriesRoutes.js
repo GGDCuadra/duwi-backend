@@ -8,5 +8,6 @@ router.get('/series', seriesController.getSeries);
 router.get('/series/:id', seriesController.getSeriesById);
 router.get('/top-series', seriesController.getTopSeries);
 router.post('/postSeries', seriesController.postSeries)
+router.put('/series/:id', seriesController.updateSeries);
 
 module.exports = router;
