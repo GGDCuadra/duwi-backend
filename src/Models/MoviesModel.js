@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
+
 const movieSchema = new mongoose.Schema({
-  
   id: Number,
   Poster_Link: String,
   Series_Title: String,
@@ -19,7 +19,7 @@ const movieSchema = new mongoose.Schema({
   No_of_Votes: Number,
   Gross: String,
   deshabilitar: String,
-});
+}, { collection: 'Movies' });
 
 const Movie = mongoose.model('Movie', movieSchema);
 
