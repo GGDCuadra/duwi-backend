@@ -11,10 +11,9 @@ router.get('/movies/genre/:genre', moviesController.getMoviesByGenre);
 router.get('/enabledMovies', moviesController.getEnabledMovies);
 router.get('/disableMovies', moviesController.getDisableMovies);
 
+router.get('/movies/byObjectId/:id', moviesController.getMovieByObjectId); 
 
 router.post('/movies', moviesController.postMovie);
-router.put('/movies/:id', moviesController.putMovie);
-
-
+router.put('/movies/byObjectId/:id', moviesController.putMovie); 
 
 module.exports = router;
