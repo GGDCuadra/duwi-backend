@@ -1,5 +1,5 @@
-const { MongoClient } = require('mongodb');
-const Movie = require('../Models/MoviesModel');
+const { MongoClient ,ObjectId } = require('mongodb');
+const Movie = require('../Models/MoviesModel'); 
 
 const mongoURL = 'mongodb+srv://DBUSER:PF123@cluster0.x6eafwv.mongodb.net/DB_PF';
 const dbName = 'DB_PF';
@@ -205,6 +205,7 @@ const postMovie = async (req, res) => {
     res.status(500).send('Error interno del servidor');
   }
 };
+
 const putMovie = async (req, res) => {
   const { body, params } = req;
   const { id } = params;
@@ -214,8 +215,8 @@ const putMovie = async (req, res) => {
     const db = client.db(dbName);
     const collection = db.collection(collectionName);
 
-    // Buscar la película actual en la base de datos
-    const existingMovie = await collection.findOne({ id: parseInt(id, 10) });
+    // Buscar la película actual en la base de datos por _id
+    const existingMovie = await collection.findOne({ _id: new ObjectId(id) });
 
     if (!existingMovie) {
       res.status(404).json({ error: 'Película no encontrada' });
@@ -244,8 +245,8 @@ const putMovie = async (req, res) => {
       deshabilitar: body.deshabilitar || existingMovie.deshabilitar,
     };
 
-    // Actualizar la película en la base de datos
-    await collection.updateOne({ id: parseInt(id, 10) }, { $set: updatedMovie });
+    // Actualizar la película en la base de datos por _id
+    await collection.updateOne({ _id: new ObjectId(id) }, { $set: updatedMovie });
 
     res.status(200).json({ message: 'Película actualizada exitosamente', updatedMovie });
 
@@ -255,9 +256,6 @@ const putMovie = async (req, res) => {
     res.status(500).send('Error interno del servidor');
   }
 };
-
-
-
 
 const getEnabledMovies = async (req, res) => {
   try {
@@ -352,5 +350,28 @@ const getDisableMovies = async (req, res) => {
   }
 };
 
+const getMovieByObjectId = async (req, res) => {
+  const movieId = req.params.id;
+  
+  try {
+    const client = await MongoClient.connect(mongoURL, { useUnifiedTopology: true });
+    const db = client.db(dbName);
+    const collection = db.collection(collectionName);
+  
+    const movie = await collection.findOne({ _id: new ObjectId(movieId) });
 
-module.exports = { getDisableMovies, postMovie, getMovies, getMovieById, getMovieByTitle, getTopMovies, getMoviesByGenre, putMovie, getEnabledMovies };
+    if (!movie) {
+      res.status(404).json({ error: 'Película no encontrada' });
+    } else {
+      res.json(movie);
+    }
+    
+    client.close();
+  } catch (err) {
+    console.error('Error al obtener la película por _id:', err);
+    res.status(500).send('Error interno del servidor');
+  }
+};
+
+
+module.exports = {  getMovieByObjectId, getDisableMovies, postMovie, getMovies, getMovieById, getMovieByTitle, getTopMovies,getMoviesByGenre ,putMovie ,getEnabledMovies};
