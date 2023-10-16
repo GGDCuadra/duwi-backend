@@ -55,7 +55,7 @@ const getTopMovies = async (req, res) => {
   try {
     const movies = await loadMoviesFromDatabase();
 
-    
+
     const topMovies = movies.slice(0, 10);
 
     const mappedMovies = topMovies.map(movie => {
@@ -148,17 +148,22 @@ const getMovieById = async (req, res) => {
 };
 
 const getMovieByTitle = async (req, res) => {
-  const { title } = req.params;
+  const { title } = req.query;
   try {
     const movies = await loadMoviesFromDatabase();
-    const movie = movies.find(movie => movie.Series_Title === title);
-    if (!movie) {
-      res.status(404).json({ error: 'Película no encontrada' });
+
+    // Filtrar películas que incluyan el título buscado (ignorando mayúsculas/minúsculas)
+    const matchingMovies = movies.filter(movie =>
+      movie.Series_Title.toLowerCase().includes(title.toLowerCase())
+    );
+
+    if (matchingMovies.length === 0) {
+      res.status(404).json({ error: 'Películas no encontradas' });
     } else {
-      res.json(movie);
+      res.json(matchingMovies);
     }
   } catch (err) {
-    console.error('Error al obtener la película por título:', err);
+    console.error('Error al obtener películas por título:', err);
     res.status(500).send('Error interno del servidor');
   }
 };
@@ -254,11 +259,27 @@ const putMovie = async (req, res) => {
 
 const getEnabledMovies = async (req, res) => {
   try {
+    const { genre, page, perPage, sortByTitle, } = req.query
     const movies = await loadMoviesFromDatabase();
 
     // Filtrar películas con "deshabilitar" establecido en "null"
-    const enabledMovies = movies.filter(movie => movie.deshabilitar === 'null');
-
+    let enabledMovies = movies.filter(movie => movie.deshabilitar === 'null');
+    if (genre) {
+      enabledMovies = enabledMovies.filter(movie => movie.Genre.includes(genre))
+    }
+    
+    if (sortByTitle === 'asc') {
+      // Ordenar alfabéticamente por título ascendente
+      enabledMovies.sort((a, b) => a.Series_Title.localeCompare(b.Series_Title));
+    } else if (sortByTitle === 'desc') {
+      // Ordenar alfabéticamente por título descendente
+      enabledMovies.sort((a, b) => b.Series_Title.localeCompare(a.Series_Title));
+    }
+    if(page && perPage) {
+      const startIndex = (perPage * page) - perPage;
+      const endIndex = startIndex + parseInt(perPage, 10)
+      enabledMovies = enabledMovies.slice(startIndex, endIndex)
+    }
     const mappedMovies = enabledMovies.map(movie => {
       return {
         _id: movie._id,
@@ -292,6 +313,7 @@ const getEnabledMovies = async (req, res) => {
 
 const getDisableMovies = async (req, res) => {
   try {
+
     const movies = await loadMoviesFromDatabase();
 
     // Filtrar películas con "deshabilitar" diferente de "null"
