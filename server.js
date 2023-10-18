@@ -30,8 +30,11 @@ app.use((req, res, next) => {
 });
 const moviesRoutes = require('./src/Routes/MoviesRoutes');
 const seriesRoutes = require('./src/Routes/SeriesRoutes');
+const userRoutes = require('./src/Routes/UserRoutes');
+
 app.use('/', moviesRoutes);
 app.use('/', seriesRoutes);
+app.use('/', userRoutes);
 
 app.listen(port, () => {
   console.log(`El servidor está escuchando en el puerto ${port}`);
