@@ -40,7 +40,8 @@ const getMovies = async (req, res) => {
         Star4: movie.Star4,
         No_of_Votes: movie.No_of_Votes,
         Gross: movie.Gross,
-        deshabilitar: movie.deshabilitar
+        deshabilitar: movie.deshabilitar,
+        Trailer: movie.Trailer
       };
     });
 
@@ -78,7 +79,8 @@ const getTopMovies = async (req, res) => {
         Star4: movie.Star4,
         No_of_Votes: movie.No_of_Votes,
         Gross: movie.Gross,
-        deshabilitar: movie.deshabilitar
+        deshabilitar: movie.deshabilitar,
+        Trailer: movie.Trailer
       };
     });
 
@@ -119,7 +121,9 @@ const getMoviesByGenre = async (req, res) => {
           Star4: movie.Star4,
           No_of_Votes: movie.No_of_Votes,
           Gross: movie.Gross,
-          deshabilitar: movie.deshabilitar
+          deshabilitar: movie.deshabilitar,
+          Trailer: movie.Trailer
+          
         };
       });
 
@@ -194,6 +198,7 @@ const postMovie = async (req, res) => {
       No_of_Votes: body.No_of_Votes,
       Gross: body.Gross,
       deshabilitar: body.deshabilitar,
+      Trailer: body.Trailer
     };
 
     await collection.insertOne(movie);
@@ -243,6 +248,7 @@ const putMovie = async (req, res) => {
       No_of_Votes: body.No_of_Votes || existingMovie.No_of_Votes,
       Gross: body.Gross || existingMovie.Gross,
       deshabilitar: body.deshabilitar || existingMovie.deshabilitar,
+      deshabilitar: body.Trailer || existingMovie.Trailer,
     };
 
     // Actualizar la película en la base de datos por _id
@@ -300,7 +306,8 @@ const getEnabledMovies = async (req, res) => {
         Star4: movie.Star4,
         No_of_Votes: movie.No_of_Votes,
         Gross: movie.Gross,
-        deshabilitar: movie.deshabilitar
+        deshabilitar: movie.deshabilitar,
+        Trailer: movie.Trailer
       };
     });
 
@@ -339,7 +346,8 @@ const getDisableMovies = async (req, res) => {
         Star4: movie.Star4,
         No_of_Votes: movie.No_of_Votes,
         Gross: movie.Gross,
-        deshabilitar: movie.deshabilitar
+        deshabilitar: movie.deshabilitar,
+        Trailer: movie.Trailer
       };
     });
 
