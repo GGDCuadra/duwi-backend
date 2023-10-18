@@ -43,7 +43,8 @@ const getSeries = async (req, res) => {
         _links: serie._links,
         self: serie._links.self.href, 
         previousepisode: serie._links.previousepisode.href, 
-        deshabilitar: serie.deshabilitar
+        deshabilitar: serie.deshabilitar,
+        Trailer: serie.Trailer
       };
     });
     const seriesHabilitadas = mappedSeries.filter(serie => serie.deshabilitar !== 'Disabled');
