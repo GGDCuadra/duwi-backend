@@ -17,7 +17,9 @@ const getMovies = async (req, res) => {
   try {
     const movies = await loadMoviesFromDatabase();
 
-    const mappedMovies = movies.map(movie => {
+    const enabledMovies = movies.filter(movie => movie.deshabilitar !== 'Disabled');
+
+    const mappedMovies = enabledMovies.map(movie => {
       return {
         _id: movie._id,
         id: movie.id,
@@ -40,6 +42,7 @@ const getMovies = async (req, res) => {
         deshabilitar: movie.deshabilitar
       };
     });
+
     res.json(mappedMovies);
   } catch (err) {
     console.error('Error al obtener datos de la base de datos:', err);
@@ -250,9 +253,81 @@ const putMovie = async (req, res) => {
 
 
 
+const getEnabledMovies = async (req, res) => {
+  try {
+    const movies = await loadMoviesFromDatabase();
+
+    // Filtrar películas con "deshabilitar" establecido en "null"
+    const enabledMovies = movies.filter(movie => movie.deshabilitar === 'null');
+
+    const mappedMovies = enabledMovies.map(movie => {
+      return {
+        _id: movie._id,
+        id: movie.id,
+        Poster_Link: movie.Poster_Link,
+        Series_Title: movie.Series_Title,
+        Released_Year: movie.Released_Year,
+        Certificate: movie.Certificate,
+        Runtime: movie.Runtime,
+        Genre: movie.Genre,
+        IMDB_Rating: movie.IMDB_Rating,
+        Overview: movie.Overview,
+        Meta_score: movie.Meta_score,
+        Director: movie.Director,
+        Star1: movie.Star1,
+        Star2: movie.Star2,
+        Star3: movie.Star3,
+        Star4: movie.Star4,
+        No_of_Votes: movie.No_of_Votes,
+        Gross: movie.Gross,
+        deshabilitar: movie.deshabilitar
+      };
+    });
+
+    res.json(mappedMovies);
+  } catch (err) {
+    console.error('Error al obtener películas habilitadas:', err);
+    res.status(500).send('Error interno del servidor');
+  }
+};
+
+const getDisableMovies = async (req, res) => {
+  try {
+    const movies = await loadMoviesFromDatabase();
+
+    // Filtrar películas con "deshabilitar" diferente de "null"
+    const disableMovies = movies.filter(movie => movie.deshabilitar !== 'null');
+
+    const mappedMovies = disableMovies.map(movie => {
+      return {
+        _id: movie._id,
+        id: movie.id,
+        Poster_Link: movie.Poster_Link,
+        Series_Title: movie.Series_Title,
+        Released_Year: movie.Released_Year,
+        Certificate: movie.Certificate,
+        Runtime: movie.Runtime,
+        Genre: movie.Genre,
+        IMDB_Rating: movie.IMDB_Rating,
+        Overview: movie.Overview,
+        Meta_score: movie.Meta_score,
+        Director: movie.Director,
+        Star1: movie.Star1,
+        Star2: movie.Star2,
+        Star3: movie.Star3,
+        Star4: movie.Star4,
+        No_of_Votes: movie.No_of_Votes,
+        Gross: movie.Gross,
+        deshabilitar: movie.deshabilitar
+      };
+    });
+
+    res.json(mappedMovies);
+  } catch (err) {
+    console.error('Error al obtener películas deshabilitadas:', err);
+    res.status(500).send('Error interno del servidor');
+  }
+};
 
 
-
-
-
-module.exports = { postMovie, getMovies, getMovieById, getMovieByTitle, getTopMovies,getMoviesByGenre ,putMovie };
+module.exports = {  getDisableMovies, postMovie, getMovies, getMovieById, getMovieByTitle, getTopMovies,getMoviesByGenre ,putMovie ,getEnabledMovies};
