@@ -1,4 +1,5 @@
-const { MongoClient, ObjectID } = require('mongodb');
+const { MongoClient ,ObjectId } = require('mongodb');
+const Movie = require('../Models/MoviesModel'); 
 
 const mongoURL = 'mongodb+srv://DBUSER:PF123@cluster0.x6eafwv.mongodb.net/DB_PF';
 const dbName = 'DB_PF';
@@ -39,7 +40,8 @@ const getMovies = async (req, res) => {
         Star4: movie.Star4,
         No_of_Votes: movie.No_of_Votes,
         Gross: movie.Gross,
-        deshabilitar: movie.deshabilitar
+        deshabilitar: movie.deshabilitar,
+        Trailer: movie.Trailer
       };
     });
 
@@ -54,7 +56,7 @@ const getTopMovies = async (req, res) => {
   try {
     const movies = await loadMoviesFromDatabase();
 
-    
+
     const topMovies = movies.slice(0, 10);
 
     const mappedMovies = topMovies.map(movie => {
@@ -77,7 +79,8 @@ const getTopMovies = async (req, res) => {
         Star4: movie.Star4,
         No_of_Votes: movie.No_of_Votes,
         Gross: movie.Gross,
-        deshabilitar: movie.deshabilitar
+        deshabilitar: movie.deshabilitar,
+        Trailer: movie.Trailer
       };
     });
 
@@ -118,7 +121,9 @@ const getMoviesByGenre = async (req, res) => {
           Star4: movie.Star4,
           No_of_Votes: movie.No_of_Votes,
           Gross: movie.Gross,
-          deshabilitar: movie.deshabilitar
+          deshabilitar: movie.deshabilitar,
+          Trailer: movie.Trailer
+          
         };
       });
 
@@ -147,17 +152,22 @@ const getMovieById = async (req, res) => {
 };
 
 const getMovieByTitle = async (req, res) => {
-  const { title } = req.params;
+  const { title } = req.query;
   try {
     const movies = await loadMoviesFromDatabase();
-    const movie = movies.find(movie => movie.Series_Title === title);
-    if (!movie) {
-      res.status(404).json({ error: 'Película no encontrada' });
+
+    // Filtrar películas que incluyan el título buscado (ignorando mayúsculas/minúsculas)
+    const matchingMovies = movies.filter(movie =>
+      movie.Series_Title.toLowerCase().includes(title.toLowerCase())
+    );
+
+    if (matchingMovies.length === 0) {
+      res.status(404).json({ error: 'Películas no encontradas' });
     } else {
-      res.json(movie);
+      res.json(matchingMovies);
     }
   } catch (err) {
-    console.error('Error al obtener la película por título:', err);
+    console.error('Error al obtener películas por título:', err);
     res.status(500).send('Error interno del servidor');
   }
 };
@@ -188,6 +198,7 @@ const postMovie = async (req, res) => {
       No_of_Votes: body.No_of_Votes,
       Gross: body.Gross,
       deshabilitar: body.deshabilitar,
+      Trailer: body.Trailer
     };
 
     await collection.insertOne(movie);
@@ -199,6 +210,7 @@ const postMovie = async (req, res) => {
     res.status(500).send('Error interno del servidor');
   }
 };
+
 const putMovie = async (req, res) => {
   const { body, params } = req;
   const { id } = params;
@@ -208,8 +220,8 @@ const putMovie = async (req, res) => {
     const db = client.db(dbName);
     const collection = db.collection(collectionName);
 
-    // Buscar la película actual en la base de datos
-    const existingMovie = await collection.findOne({ id: parseInt(id, 10) });
+    // Buscar la película actual en la base de datos por _id
+    const existingMovie = await collection.findOne({ _id: new ObjectId(id) });
 
     if (!existingMovie) {
       res.status(404).json({ error: 'Película no encontrada' });
@@ -236,10 +248,11 @@ const putMovie = async (req, res) => {
       No_of_Votes: body.No_of_Votes || existingMovie.No_of_Votes,
       Gross: body.Gross || existingMovie.Gross,
       deshabilitar: body.deshabilitar || existingMovie.deshabilitar,
+      deshabilitar: body.Trailer || existingMovie.Trailer,
     };
 
-    // Actualizar la película en la base de datos
-    await collection.updateOne({ id: parseInt(id, 10) }, { $set: updatedMovie });
+    // Actualizar la película en la base de datos por _id
+    await collection.updateOne({ _id: new ObjectId(id) }, { $set: updatedMovie });
 
     res.status(200).json({ message: 'Película actualizada exitosamente', updatedMovie });
 
@@ -250,16 +263,29 @@ const putMovie = async (req, res) => {
   }
 };
 
-
-
-
 const getEnabledMovies = async (req, res) => {
   try {
+    const { genre, page, perPage, sortByTitle, } = req.query
     const movies = await loadMoviesFromDatabase();
 
     // Filtrar películas con "deshabilitar" establecido en "null"
-    const enabledMovies = movies.filter(movie => movie.deshabilitar === 'null');
-
+    let enabledMovies = movies.filter(movie => movie.deshabilitar === 'null');
+    if (genre) {
+      enabledMovies = enabledMovies.filter(movie => movie.Genre.includes(genre))
+    }
+    
+    if (sortByTitle === 'asc') {
+      // Ordenar alfabéticamente por título ascendente
+      enabledMovies.sort((a, b) => a.Series_Title.localeCompare(b.Series_Title));
+    } else if (sortByTitle === 'desc') {
+      // Ordenar alfabéticamente por título descendente
+      enabledMovies.sort((a, b) => b.Series_Title.localeCompare(a.Series_Title));
+    }
+    if(page && perPage) {
+      const startIndex = (perPage * page) - perPage;
+      const endIndex = startIndex + parseInt(perPage, 10)
+      enabledMovies = enabledMovies.slice(startIndex, endIndex)
+    }
     const mappedMovies = enabledMovies.map(movie => {
       return {
         _id: movie._id,
@@ -280,7 +306,8 @@ const getEnabledMovies = async (req, res) => {
         Star4: movie.Star4,
         No_of_Votes: movie.No_of_Votes,
         Gross: movie.Gross,
-        deshabilitar: movie.deshabilitar
+        deshabilitar: movie.deshabilitar,
+        Trailer: movie.Trailer
       };
     });
 
@@ -293,6 +320,7 @@ const getEnabledMovies = async (req, res) => {
 
 const getDisableMovies = async (req, res) => {
   try {
+
     const movies = await loadMoviesFromDatabase();
 
     // Filtrar películas con "deshabilitar" diferente de "null"
@@ -318,7 +346,8 @@ const getDisableMovies = async (req, res) => {
         Star4: movie.Star4,
         No_of_Votes: movie.No_of_Votes,
         Gross: movie.Gross,
-        deshabilitar: movie.deshabilitar
+        deshabilitar: movie.deshabilitar,
+        Trailer: movie.Trailer
       };
     });
 
@@ -329,5 +358,28 @@ const getDisableMovies = async (req, res) => {
   }
 };
 
+const getMovieByObjectId = async (req, res) => {
+  const movieId = req.params.id;
+  
+  try {
+    const client = await MongoClient.connect(mongoURL, { useUnifiedTopology: true });
+    const db = client.db(dbName);
+    const collection = db.collection(collectionName);
+  
+    const movie = await collection.findOne({ _id: new ObjectId(movieId) });
 
-module.exports = {  getDisableMovies, postMovie, getMovies, getMovieById, getMovieByTitle, getTopMovies,getMoviesByGenre ,putMovie ,getEnabledMovies};
+    if (!movie) {
+      res.status(404).json({ error: 'Película no encontrada' });
+    } else {
+      res.json(movie);
+    }
+    
+    client.close();
+  } catch (err) {
+    console.error('Error al obtener la película por _id:', err);
+    res.status(500).send('Error interno del servidor');
+  }
+};
+
+
+module.exports = {  getMovieByObjectId, getDisableMovies, postMovie, getMovies, getMovieById, getMovieByTitle, getTopMovies,getMoviesByGenre ,putMovie ,getEnabledMovies};

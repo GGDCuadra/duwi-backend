@@ -16,8 +16,27 @@ const loadSeriesFromDatabase = async () => {
 
 const getSeries = async (req, res) => {
   try {
-    const series = await loadSeriesFromDatabase();
-    
+    const{genre, page, perPage, sortByTitle} = req.query
+
+    let series = await loadSeriesFromDatabase();
+
+    if(genre){
+      series = series.filter((serie) => serie.genres.includes(genre))
+    }
+
+    if (sortByTitle === 'asc') {
+
+      series.sort((a, b) => a.name.localeCompare(b.name));
+    } else if (sortByTitle === 'desc') {
+      series.sort((a, b) => b.name.localeCompare(a.name));
+    }
+
+    if (page && perPage) {
+      const startIndex = (page - 1) * perPage;
+      const endIndex = startIndex + parseInt(perPage, 10);
+      series = series.slice(startIndex, endIndex);
+    }
+
     const mappedSeries = series.map(serie => {
       return{
         _id: serie._id,
@@ -43,7 +62,8 @@ const getSeries = async (req, res) => {
         _links: serie._links,
         self: serie._links.self.href, 
         previousepisode: serie._links.previousepisode.href, 
-        deshabilitar: serie.deshabilitar
+        deshabilitar: serie.deshabilitar,
+        Trailer: serie.Trailer
       };
     });
     const seriesHabilitadas = mappedSeries.filter(serie => serie.deshabilitar !== 'Disabled');
