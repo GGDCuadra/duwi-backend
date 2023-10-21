@@ -41,29 +41,30 @@ const getUserById = async (req, res) => {
   };
   
 
-const createUser = async (req, res) => {
-  const { body } = req;
-  try {
-    const client = await MongoClient.connect(mongoURL, { useUnifiedTopology: true });
-    const db = client.db(dbName);
-    const collection = db.collection(collectionName);
-    const user = {
-      imagen_de_perfil: body.imagen_de_perfil,
-      username: body.username,
-      email: body.email,
-      password: body.password,
-      fecha_de_nacimiento: body.fecha_de_nacimiento,
-      rol: body.rol,
-      activo: body.activo,
-    };
-    await collection.insertOne(user);
-    res.status(201).json({ message: 'Usuario creado exitosamente' });
-    client.close();
-  } catch (err) {
-    console.error('Error al crear el usuario:', err);
-    res.status(500).send('Error interno del servidor');
-  }
-};
+  const createUser = async (req, res) => {
+    const { body } = req;
+    try {
+      const client = await MongoClient.connect(mongoURL, { useUnifiedTopology: true });
+      const db = client.db(dbName);
+      const collection = db.collection(collectionName);
+      const user = {
+        credential: body.credential,
+        imagen_de_perfil: body.imagen_de_perfil,
+        username: body.username,
+        email: body.email,
+        password: body.password,
+        fecha_de_nacimiento: body.fecha_de_nacimiento,
+        rol: body.rol,
+        activo: body.activo,
+      };
+      await collection.insertOne(user);
+      res.status(201).json({ message: 'Usuario creado exitosamente' });
+      client.close();
+    } catch (err) {
+      console.error('Error al crear el usuario:', err);
+      res.status(500).send('Error interno del servidor');
+    }
+  };
 
 const updateUser = async (req, res) => {
   const { body, params } = req;

@@ -195,6 +195,7 @@ const postMovie = async (req, res) => {
       Star2: body.Star2,
       Star3: body.Star3,
       Star4: body.Star4,
+      Actors: body.Actors,
       No_of_Votes: body.No_of_Votes,
       Gross: body.Gross,
       deshabilitar: body.deshabilitar,
