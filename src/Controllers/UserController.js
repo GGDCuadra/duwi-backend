@@ -48,6 +48,7 @@ const createUser = async (req, res) => {
     const db = client.db(dbName);
     const collection = db.collection(collectionName);
     const user = {
+      credential: body.credential,
       imagen_de_perfil: body.imagen_de_perfil,
       username: body.username,
       email: body.email,

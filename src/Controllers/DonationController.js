@@ -1,5 +1,6 @@
 const fetch = require('node-fetch');
 require('dotenv').config();
+const Donation = require('../Models/DonationModel')
 
 const { PAYPAL_CLIENT_ID, PAYPAL_CLIENT_SECRET } = process.env;
 const base = "https://api-m.sandbox.paypal.com";// Cambiar a 'https://api.paypal.com' para producción
@@ -90,8 +91,15 @@ async function handleResponse(response) {
 const postDonation = async (req, res) => {
   console.log('Solicitud POST a /donate recibida');
   try {
-    const { donationAmount } = req.body; // El monto de la donación enviado desde el frontend
-    const { jsonResponse, httpStatusCode } = await createOrder(donationAmount);
+    const { userId, amount } = req.body; // El monto de la donación enviado desde el frontend
+    const { jsonResponse, httpStatusCode } = await createOrder(amount);
+
+    const newDonation = new Donation({
+      userId: userId,
+      amount: amount,
+    });
+    await newDonation.save();
+
     res.status(httpStatusCode).json(jsonResponse);
   } catch (error) {
     console.error('Failed to process donation:', error);
@@ -99,4 +107,16 @@ const postDonation = async (req, res) => {
   }
 };
 
-module.exports = { postDonation };
+///Visualizar donaciones de un usuario
+const viewDonations = async (req, res) => {
+  const userId = req.params.userId;
+  try{
+    const donations = await Donation.find({ userId});
+    res.status(200).json(donations);
+  }catch(error){
+    console.error('Failed to retrieve donations:', error);
+    res.status(500).json({ error: 'No se pudo obtenr las donaciones.' });
+  }
+};
+
+module.exports = { postDonation, viewDonations };
