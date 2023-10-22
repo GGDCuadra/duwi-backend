@@ -48,6 +48,7 @@ const getUserById = async (req, res) => {
       const db = client.db(dbName);
       const collection = db.collection(collectionName);
       const user = {
+        
         credential: body.credential,
         imagen_de_perfil: body.imagen_de_perfil,
         username: body.username,
@@ -57,6 +58,7 @@ const getUserById = async (req, res) => {
         rol: body.rol,
         activo: body.activo,
       };
+      
       await collection.insertOne(user);
       res.status(201).json({ message: 'Usuario creado exitosamente' });
       client.close();
