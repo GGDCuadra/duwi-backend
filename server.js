@@ -1,10 +1,16 @@
 const express = require('express');
 const app = express();
 const port = process.env.PORT || 3001;
-
+const path = require('path');
 const cors = require('cors'); 
 
 app.use(express.json());
+
+//
+
+app.use(express.static(path.join(__dirname, 'front')));
+
+//
 
 app.use(cors({
   origin: 'http://localhost:5173',  
@@ -12,6 +18,14 @@ app.use(cors({
 }));
 
 app.use(express.json());
+
+//modificado por nodemailer
+app.use(express.urlencoded({ extended: false }));
+
+app.use(require('./src/Routes/NotificationRoutes.js'))
+
+//
+
 const mongoose = require('mongoose');
 mongoose.connect('mongodb+srv://DBUSER:PF123@cluster0.x6eafwv.mongodb.net/DB_PF', { useNewUrlParser: true, useUnifiedTopology: true });
 
@@ -31,10 +45,14 @@ app.use((req, res, next) => {
 const moviesRoutes = require('./src/Routes/MoviesRoutes');
 const seriesRoutes = require('./src/Routes/SeriesRoutes');
 const userRoutes = require('./src/Routes/UserRoutes');
+const donationRoutes = require('./src/Routes/DonationRoutes')
+const notificationRoutes = require('./src/Routes/NotificationRoutes');
 
 app.use('/', moviesRoutes);
 app.use('/', seriesRoutes);
 app.use('/', userRoutes);
+app.use('/', donationRoutes);
+app.use('/', notificationRoutes);
 
 app.listen(port, () => {
   console.log(`El servidor está escuchando en el puerto ${port}`);

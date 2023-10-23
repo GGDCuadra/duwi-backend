@@ -140,10 +140,9 @@ const getSeriesById = async (req, res) => {
   }
 };
 
-
 //---Name
 const getSeriesByName = async (req, res) => {
-  const { name } = req.query;
+  const { name } = req.params;
   try {
     const series = await loadSeriesFromDatabase();
     const serie = series.find(serie => serie.name === name );
@@ -157,6 +156,7 @@ const getSeriesByName = async (req, res) => {
     res.status(500).send('Error interno del servidor');
   }
 };
+
 // POSTSERIES
 const postSeries = async (req, res) => {
   const { body } = req;
@@ -212,14 +212,13 @@ const updateSeries = async (req, res) => {
     const db = client.db(dbName);
     const collection = db.collection(collectionName);
 
-    
     const existingSeries = await collection.findOne({ id: parseInt(id, 10) });
 
     if (!existingSeries) {
       res.status(404).json({ error: 'Serie no encontrada' });
       return;
-    
     }
+
     const updatedSeries = {
       id: existingSeries.id,
       name: body.name,
@@ -228,8 +227,7 @@ const updateSeries = async (req, res) => {
       // Agrega aquí otros campos de actualización según tu esquema de datos
     };
 
-      await collection.updateOne({ id: parseInt(id, 10) }, { $set: updatedSeries });
-
+    await collection.updateOne({ id: parseInt(id, 10) }, { $set: updatedSeries });
     res.status(200).json({ message: 'Serie actualizada exitosamente', updatedSeries });
 
     client.close();
@@ -238,6 +236,7 @@ const updateSeries = async (req, res) => {
     res.status(500).send('Error interno del servidor');
   }
 }
+
  //----Disable
 const disableSerie = async (req, res) => {
   try {
@@ -265,6 +264,4 @@ const disableSerie = async (req, res) => {
   }
 };
 
-
-    
 module.exports = { getSeries, getSeriesById, getSeriesByName, getTopSeries, postSeries,updateSeries, disableSerie };
