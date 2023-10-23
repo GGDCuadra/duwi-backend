@@ -17,7 +17,7 @@ const getFavoritesByUser = async (req, res) => {
   
     try {
       // Consulta la base de datos para encontrar los favoritos del usuario
-      const favorites = await Favorite.find({ userId });
+      const favorites = await SerieFavorite.find({ userId });
   
       res.status(200).json(favorites);
     } catch (error) {
@@ -32,7 +32,7 @@ const getFavoritesByUser = async (req, res) => {
   
     try {
     
-      const favorite = await Favorite.findOneAndDelete({ userId, seriesId });
+      const favorite = await SerieFavorite.findOneAndDelete({ userId, seriesId });
   
       if (!favorite) {
         return res.status(404).json({ error: 'Serie no encontrada en favoritos.' });
