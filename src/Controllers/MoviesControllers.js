@@ -266,7 +266,7 @@ const putMovie = async (req, res) => {
 
 const getEnabledMovies = async (req, res) => {
   try {
-    const { genre, page, perPage, sortByTitle, } = req.query
+    const { genre, page, perPage, sortByTitle, sortByYear } = req.query
     const movies = await loadMoviesFromDatabase();
 
     // Filtrar películas con "deshabilitar" establecido en "null"
@@ -282,6 +282,15 @@ const getEnabledMovies = async (req, res) => {
       // Ordenar alfabéticamente por título descendente
       enabledMovies.sort((a, b) => b.Series_Title.localeCompare(a.Series_Title));
     }
+
+    if (sortByYear === 'asc') {
+      // Ordenar por año ascendente
+      enabledMovies.sort((a, b) => a.Released_Year - b.Released_Year);
+    } else if (sortByYear === 'desc') {
+      // Ordenar por año descendente
+      enabledMovies.sort((a, b) => b.Released_Year - a.Released_Year);
+    }
+    
     if(page && perPage) {
       const startIndex = (perPage * page) - perPage;
       const endIndex = startIndex + parseInt(perPage, 10)
