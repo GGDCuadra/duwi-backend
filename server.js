@@ -6,10 +6,7 @@ const cors = require('cors');
 
 app.use(express.json());
 
-app.use(cors({
-  origin: 'http://localhost:5173',  
-  optionsSuccessStatus: 200  
-}));
+app.use(cors());  
 
 app.use(express.json());
 const mongoose = require('mongoose');
