@@ -16,7 +16,7 @@ const loadSeriesFromDatabase = async () => {
 
 const getSeries = async (req, res) => {
   try {
-    const{genre, page, perPage, sortByTitle} = req.query
+    const{genre, page, perPage, sortByTitle, sortByYear} = req.query
 
     let series = await loadSeriesFromDatabase();
 
@@ -30,6 +30,23 @@ const getSeries = async (req, res) => {
     } else if (sortByTitle === 'desc') {
       series.sort((a, b) => b.name.localeCompare(a.name));
     }
+
+    if (sortByYear === 'asc') {
+      // Ordenar por año ascendente
+      series.sort((a, b) => {
+        const yearA = new Date(a.premiered).getFullYear();
+        const yearB = new Date(b.premiered).getFullYear();
+        return yearA - yearB;
+      });
+    } else if (sortByYear === 'desc') {
+      // Ordenar por año descendente
+      series.sort((a, b) => {
+        const yearA = new Date(a.premiered).getFullYear();
+        const yearB = new Date(b.premiered).getFullYear();
+        return yearB - yearA;
+      });
+    }
+
 
     if (page && perPage) {
       const startIndex = (page - 1) * perPage;
