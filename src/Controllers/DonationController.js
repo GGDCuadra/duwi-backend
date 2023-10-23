@@ -89,18 +89,23 @@ async function handleResponse(response) {
   
 //Controlador para procesar la solicitud post
 const postDonation = async (req, res) => {
+  
   console.log('Solicitud POST a /donate recibida');
   try {
-    const { userId, amount } = req.body; // El monto de la donación enviado desde el frontend
-    const { jsonResponse, httpStatusCode } = await createOrder(amount);
-
+    const {  total,createDate,name, email,status,address,id } = req.body; // El monto de la donación enviado desde el frontend
     const newDonation = new Donation({
-      userId: userId,
-      amount: amount,
+      userId: "asdasfsdfñklnlnasdasd123123sda",
+      amount: total,
+      createDate: createDate,
+      name: name,
+      email: email,
+      status:status,
+      address: address,
+      id: id
     });
     await newDonation.save();
 
-    res.status(httpStatusCode).json(jsonResponse);
+    res.status(201).json(newDonation);
   } catch (error) {
     console.error('Failed to process donation:', error);
     res.status(500).json({ error: 'Failed to process donation.' });
