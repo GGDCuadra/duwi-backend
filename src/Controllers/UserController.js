@@ -106,4 +106,25 @@ const updateUser = async (req, res) => {
   }
 };
 
-module.exports = { getUsers, getUserById, createUser, updateUser };
+const getUserByEmail = async (req, res) => {
+  const { email } = req.query; 
+  try {
+    const client = await MongoClient.connect(mongoURL, { useUnifiedTopology: true });
+    const db = client.db(dbName);
+    const collection = db.collection(collectionName);
+
+    const user = await collection.findOne({ email });
+    client.close();
+
+    if (user) {
+      res.status(200).json(user);
+    } else {
+      res.status(404).json({ error: 'Usuario no encontrado' });
+    }
+  } catch (err) {
+    console.error('Error al obtener el usuario por email:', err);
+    res.status(500).send('Error interno del servidor');
+  }
+};
+
+module.exports = { getUsers, getUserById, createUser, updateUser, getUserByEmail };
