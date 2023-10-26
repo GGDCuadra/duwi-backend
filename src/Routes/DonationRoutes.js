@@ -5,5 +5,6 @@ const router = express.Router();
 
 router.post('/donate', DonationController.postDonation);
 router.get('/viewdonations/:userId', DonationController.viewDonations);
+router.get('/alldonations', DonationController.getAllDonations);
 
 module.exports = router;
