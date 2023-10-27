@@ -96,11 +96,14 @@ const updateUser = async (req, res) => {
       rol: body.rol || existingUser.rol,
       activo: body.activo || existingUser.activo,
       imagen_de_perfil: body.imagen_de_perfil || existingUser.imagen_de_perfil,
+<<<<<<< HEAD
       Nickname :  body.Nickname || existingUser.Nickname,
       edad :  body.edad || existingUser.edad,
       genres :  body.genres || existingUser.genres,
       apodo :  body. apodo || existingUser. apodo,
      
+=======
+>>>>>>> origin
     };
     await collection.updateOne({ _id: new ObjectId(id) }, { $set: updatedUser });
     res.status(200).json({ message: 'Usuario actualizado exitosamente', updatedUser });
@@ -111,6 +114,7 @@ const updateUser = async (req, res) => {
   }
 };
 
+<<<<<<< HEAD
 const getUserByEmail = async (req, res) => {
   const { email } = req.query; 
   try {
@@ -133,3 +137,6 @@ const getUserByEmail = async (req, res) => {
 };
 
 module.exports = { getUsers, getUserById, createUser, updateUser, getUserByEmail };
+=======
+module.exports = { getUsers, getUserById, createUser, updateUser };
+>>>>>>> origin

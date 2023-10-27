@@ -14,8 +14,6 @@ router.get('/disableMovies', moviesController.getDisableMovies);
 
 router.get('/movies/byObjectId/:id', moviesController.getMovieByObjectId); 
 
-
-
 router.post('/movies', moviesController.postMovie);
 router.put('/movies/byObjectId/:id', moviesController.putMovie); 
 
