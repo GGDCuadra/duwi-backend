@@ -1,12 +1,14 @@
-const MovieFavorite = require('../Models/FavoritesModelMovies');
+const MoviesFavorite = require('../Models/FavoritesModelMovies');
 
 const addMovieToFavorite = async (req, res) => {
   try {
-    const { userId, movieId } = req.body;
-    const movieFavorite = new MovieFavorite({ userId, movieId });
+    console.log("Solicitud recibida");
+    const { userId, moviesId, name, genres, image } = req.body;
+    const movieFavorite = new MoviesFavorite({ userId, moviesId, name, genres, image });
     await movieFavorite.save();
     res.status(201).json(movieFavorite);
   } catch (error) {
+    console.error('Error al agregar película a favoritos:', error);
     res.status(500).json({ error: 'No se pudo agregar la película a favoritos.' });
   }
 };
@@ -18,7 +20,7 @@ const getFavoriteMoviesByUser = async (req, res) => {
   
     try {
       // Consulta la base de datos para encontrar las películas favoritas del usuario
-      const favoriteMovies = await MovieFavorite.find({ userId });
+      const favoriteMovies = await MoviesFavorite.find({ userId });
   
       res.status(200).json(favoriteMovies);
     } catch (error) {
@@ -30,10 +32,10 @@ const getFavoriteMoviesByUser = async (req, res) => {
 //ELIMINAR MOVIE DE FAVORITOS
   const deleteMovieFromFavorite = async (req, res) => {
     try {
-      const { userId, movieId } = req.params;
+      const { userId, moviesId, name, genre, image } = req.params;
   
       // Busca el registro en la base de datos que asocie el usuario y la película como favorita
-      const movieFavorite = await MovieFavorite.findOneAndDelete({ userId, movieId });
+      const movieFavorite = await MoviesFavorite.findOneAndDelete({ userId, moviesId, name, genre, image });
   
       if (!movieFavorite) {
         return res.status(404).json({ error: 'Película no encontrada en favoritos.' });

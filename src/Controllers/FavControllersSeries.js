@@ -4,15 +4,10 @@ const addFavSeries = async (req, res) => {
   try {
     console.log("Solicitud recibida");
     const { userId, seriesId, name, genres, image } = req.body;
-
     console.log(name, userId, seriesId, genres, image);
-
     const favorite = new SeriesFavorite({ userId, seriesId, name, genres, image });
-
     await favorite.save();
-
     res.status(201).json(favorite);
-
   } catch (error) {
     res.status(500).json({ error: 'No se pudo crear el favorito.' });
   }
@@ -24,7 +19,7 @@ const getFavoritesByUser = async (req, res) => {
   
     try {
       // Consulta la base de datos para encontrar los favoritos del usuario
-      const favorites = await SerieFavorite.find({ userId });
+      const favorites = await SeriesFavorite.find({ userId });
   
       res.status(200).json(favorites);
     } catch (error) {
@@ -39,7 +34,7 @@ const getFavoritesByUser = async (req, res) => {
   
     try {
     
-      const favorite = await SerieFavorite.findOneAndDelete({ userId, seriesId, name, genre, image });
+      const favorite = await SeriesFavorite.findOneAndDelete({ userId, seriesId, name, genre, image });
   
       if (!favorite) {
         return res.status(404).json({ error: 'Serie no encontrada en favoritos.' });
