@@ -96,6 +96,11 @@ const updateUser = async (req, res) => {
       rol: body.rol || existingUser.rol,
       activo: body.activo || existingUser.activo,
       imagen_de_perfil: body.imagen_de_perfil || existingUser.imagen_de_perfil,
+      Nickname :  body.Nickname || existingUser.Nickname,
+      edad :  body.edad || existingUser.edad,
+      genres :  body.genres || existingUser.genres,
+      apodo :  body. apodo || existingUser. apodo,
+     
     };
     await collection.updateOne({ _id: new ObjectId(id) }, { $set: updatedUser });
     res.status(200).json({ message: 'Usuario actualizado exitosamente', updatedUser });
