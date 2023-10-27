@@ -127,4 +127,27 @@ const getUserByEmail = async (req, res) => {
   }
 };
 
-module.exports = { getUsers, getUserById, createUser, updateUser, getUserByEmail };
+const disableUser = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const client = await MongoClient.connect(mongoURL, { useUnifiedTopology: true });
+    const db = client.db(dbName);
+    const collection = db.collection(collectionName);
+    const existingUser = await collection.findOne({ _id: new ObjectId(id) });
+    if (!existingUser) {
+      res.status(404).json({ error: 'Usuario no encontrado' });
+      return;
+    }
+    // Marca al usuario como deshabilitado (ajusta esto según tu modelo de datos)
+    await collection.updateOne({ _id: new ObjectId(id) }, { $set: { activo: false } });
+    res.status(200).json({ message: 'Usuario deshabilitado exitosamente' });
+    client.close();
+  } catch (err) {
+    console.error('Error al deshabilitar el usuario:', err);
+    res.status(500).send('Error interno del servidor');
+  }
+};
+
+module.exports = { getUsers, getUserById, createUser, updateUser, getUserByEmail, disableUser };
+
+
