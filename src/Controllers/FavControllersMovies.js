@@ -3,6 +3,10 @@ const MovieFavorite = require('../Models/FavoritesModelMovies');
 const addMovieToFavorite = async (req, res) => {
   try {
     const { userId, movieId } = req.body;
+    const existInDb = await MovieFavorite.findOne({userId, movieId})
+    if(existInDb){
+      return res.status(200).json({message: "Esa pelicula ya se encuntra en favoritos"})
+    }
     const movieFavorite = new MovieFavorite({ userId, movieId });
     await movieFavorite.save();
     res.status(201).json(movieFavorite);
@@ -31,6 +35,7 @@ const getFavoriteMoviesByUser = async (req, res) => {
 //ELIMINAR MOVIE DE FAVORITOS
   const deleteMovieFromFavorite = async (req, res) => {
     try {
+      console.log("recibido solicitud de eliminar");
       const { userId, movieId } = req.params;
 
       // Busca el registro en la base de datos que asocie el usuario y la película como favorita
