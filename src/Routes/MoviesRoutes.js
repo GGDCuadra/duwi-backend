@@ -14,8 +14,6 @@ router.get('/disableMovies', moviesController.getDisableMovies);
 
 router.get('/movies/byObjectId/:id', moviesController.getMovieByObjectId); 
 
-
-
 router.post('/movies', moviesController.postMovie);
 router.put('/movies/byObjectId/:id', moviesController.putMovie); 
 
@@ -25,5 +23,7 @@ router.post('/favorites/movies', favController.addMovieToFavorite);
 router.get('/favorites/movies/:userId', favController.getFavoriteMoviesByUser);
 router.delete('/favorites/movies/:userId/:movieId', favController.deleteMovieFromFavorite);
 
+router.put('/movies/enable/:movieId', moviesController.enableMovie);
+router.put('/movies/disable/:movieId', moviesController.disableMovie);
 
 module.exports = router;
