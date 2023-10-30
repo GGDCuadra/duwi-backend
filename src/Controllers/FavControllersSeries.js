@@ -3,6 +3,10 @@ const SerieFavorite = require('../Models/FavoritesModel');
 const addFavSeries = async (req, res) => {
   try {
     const { userId, seriesId } = req.body;
+    const existInDb = await SerieFavorite.findOne({userId, seriesId})
+    if(existInDb){
+      return res.status(200).json({message: "Esa series ya se encuntra en favoritos"})
+    }
     const favorite = new SerieFavorite({ userId, seriesId });
     await favorite.save();
     res.status(201).json(favorite);
@@ -31,7 +35,7 @@ const getFavoritesByUser = async (req, res) => {
     const { userId, seriesId } = req.params;
 
     try {
-
+      console.log("Eliminacion de series recibido");
       const favorite = await SerieFavorite.findOneAndDelete({ userId, seriesId });
 
       if (!favorite) {
