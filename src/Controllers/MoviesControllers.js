@@ -405,12 +405,10 @@ const enableMovie = async (req, res) => {
     }
 
     await collection.updateOne({ _id: new ObjectId(movieId) }, { $set: { deshabilitar: "null" } });
-
     const updatedMovie = await collection.findOne({ _id: new ObjectId(movieId) });
-
     res.status(200).json({ message: 'Película habilitada exitosamente', updatedMovie });
-
     client.close();
+    
   } catch (err) {
     console.error('Error al habilitar la película:', err);
     res.status(500).send('Error interno del servidor');
@@ -432,14 +430,11 @@ const disableMovie = async (req, res) => {
       return;
     }
 
-    // Actualiza la película en la base de datos para deshabilitarla
     await collection.updateOne({ _id: new ObjectId(movieId) }, { $set: { deshabilitar: 'Disabled' } });
-
     const updatedMovie = await collection.findOne({ _id: new ObjectId(movieId) });
-
     res.status(200).json({ message: 'Película deshabilitada exitosamente', updatedMovie });
-
     client.close();
+
   } catch (err) {
     console.error('Error al deshabilitar la película:', err);
     res.status(500).send('Error interno del servidor');
