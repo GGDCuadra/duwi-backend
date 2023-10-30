@@ -96,6 +96,11 @@ const updateUser = async (req, res) => {
       rol: body.rol || existingUser.rol,
       activo: body.activo || existingUser.activo,
       imagen_de_perfil: body.imagen_de_perfil || existingUser.imagen_de_perfil,
+      Nickname :  body.Nickname || existingUser.Nickname,
+      edad :  body.edad || existingUser.edad,
+      genres :  body.genres || existingUser.genres,
+      apodo :  body. apodo || existingUser. apodo,
+     
     };
     await collection.updateOne({ _id: new ObjectId(id) }, { $set: updatedUser });
     res.status(200).json({ message: 'Usuario actualizado exitosamente', updatedUser });
@@ -106,4 +111,25 @@ const updateUser = async (req, res) => {
   }
 };
 
-module.exports = { getUsers, getUserById, createUser, updateUser };
+const getUserByEmail = async (req, res) => {
+  const { email } = req.query; 
+  try {
+    const client = await MongoClient.connect(mongoURL, { useUnifiedTopology: true });
+    const db = client.db(dbName);
+    const collection = db.collection(collectionName);
+
+    const user = await collection.findOne({ email });
+    client.close();
+
+    if (user) {
+      res.status(200).json(user);
+    } else {
+      res.status(404).json({ error: 'Usuario no encontrado' });
+    }
+  } catch (err) {
+    console.error('Error al obtener el usuario por email:', err);
+    res.status(500).send('Error interno del servidor');
+  }
+};
+
+module.exports = { getUsers, getUserById, createUser, updateUser, getUserByEmail };

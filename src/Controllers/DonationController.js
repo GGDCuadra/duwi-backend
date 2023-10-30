@@ -124,4 +124,14 @@ const viewDonations = async (req, res) => {
   }
 };
 
-module.exports = { postDonation, viewDonations };
+//visualizar todas las donaciones 
+const getAllDonations = async (req, res) => {
+  try{
+    const donations = await Donation.find();
+    res.status(200).json(donations);
+  }catch (error){
+    res.status(500).json({error: "No se pudieron objetenr las donaciones "});
+  }
+}
+
+module.exports = { postDonation, viewDonations, getAllDonations };

@@ -5,6 +5,29 @@ const path = require('path');
 const cors = require('cors'); 
 
 
+
+//
+
+const morgan = require('morgan');
+const session = require('express-session');
+const flash = require('connect-flash');
+const toastr = require('express-toastr');
+
+
+app.use(morgan('dev'));
+
+
+app.use(session({
+  secret: 'pfmoviesnry',
+  saveUninitialized: true,
+  resave: true
+}));
+app.use(flash());
+
+app.use(toastr());
+
+//
+
 //
 
 app.use(express.static(path.join(__dirname, 'front')));
@@ -20,6 +43,14 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 app.use(require('./src/Routes/NotificationRoutes.js'))
+
+//
+
+app.use((req, res, next) => {
+  res.locals.usuario = req.user;
+  res.locals.toastr = req.toastr.render()
+  next();
+})
 
 //
 
@@ -44,12 +75,15 @@ const seriesRoutes = require('./src/Routes/SeriesRoutes');
 const userRoutes = require('./src/Routes/UserRoutes');
 const donationRoutes = require('./src/Routes/DonationRoutes')
 const notificationRoutes = require('./src/Routes/NotificationRoutes');
+const sugestionRoutes = require('./src/Routes/sugestionRoutes');
+
 
 app.use('/', moviesRoutes);
 app.use('/', seriesRoutes);
 app.use('/', userRoutes);
 app.use('/', donationRoutes);
 app.use('/', notificationRoutes);
+app.use('/', sugestionRoutes);
 
 app.listen(port, () => {
   console.log(`El servidor está escuchando en el puerto ${port}`);
