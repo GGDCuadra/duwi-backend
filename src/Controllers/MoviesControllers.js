@@ -18,9 +18,7 @@ const getMovies = async (req, res) => {
   try {
     const movies = await loadMoviesFromDatabase();
 
-    const enabledMovies = movies.filter(movie => movie.deshabilitar !== 'Disabled');
-
-    const mappedMovies = enabledMovies.map(movie => {
+    const mappedMovies = movies.map(movie => {
       return {
         _id: movie._id,
         id: movie.id,
@@ -391,5 +389,56 @@ const getMovieByObjectId = async (req, res) => {
   }
 };
 
+const enableMovie = async (req, res) => {
+  const { movieId } = req.params;
 
-module.exports = {  getMovieByObjectId, getDisableMovies, postMovie, getMovies, getMovieById, getMovieByTitle, getTopMovies,getMoviesByGenre ,putMovie ,getEnabledMovies};
+  try {
+    const client = await MongoClient.connect(mongoURL, { useUnifiedTopology: true });
+    const db = client.db(dbName);
+    const collection = db.collection(collectionName);
+
+    const movie = await collection.findOne({ _id: new ObjectId(movieId) });
+
+    if (!movie) {
+      res.status(404).json({ error: 'Película no encontrada' });
+      return;
+    }
+
+    await collection.updateOne({ _id: new ObjectId(movieId) }, { $set: { deshabilitar: "null" } });
+    const updatedMovie = await collection.findOne({ _id: new ObjectId(movieId) });
+    res.status(200).json({ message: 'Película habilitada exitosamente', updatedMovie });
+    client.close();
+    
+  } catch (err) {
+    console.error('Error al habilitar la película:', err);
+    res.status(500).send('Error interno del servidor');
+  }
+};
+
+const disableMovie = async (req, res) => {
+  const { movieId } = req.params;
+
+  try {
+    const client = await MongoClient.connect(mongoURL, { useUnifiedTopology: true });
+    const db = client.db(dbName);
+    const collection = db.collection(collectionName);
+
+    const movie = await collection.findOne({ _id: new ObjectId(movieId) });
+
+    if (!movie) {
+      res.status(404).json({ error: 'Película no encontrada' });
+      return;
+    }
+
+    await collection.updateOne({ _id: new ObjectId(movieId) }, { $set: { deshabilitar: 'Disabled' } });
+    const updatedMovie = await collection.findOne({ _id: new ObjectId(movieId) });
+    res.status(200).json({ message: 'Película deshabilitada exitosamente', updatedMovie });
+    client.close();
+
+  } catch (err) {
+    console.error('Error al deshabilitar la película:', err);
+    res.status(500).send('Error interno del servidor');
+  }
+};
+
+module.exports = {  getMovieByObjectId, getDisableMovies, postMovie, getMovies, getMovieById, getMovieByTitle, getTopMovies,getMoviesByGenre ,putMovie ,getEnabledMovies, enableMovie, disableMovie};
