@@ -13,7 +13,9 @@ router.get('/top-series', seriesController.getTopSeries);
 
 router.post('/postSeries', seriesController.postSeries)
 router.put('/series/:id', seriesController.updateSeries);
-router.put('/series/deshabilitar/:id', seriesController.disableSerie);
+// router.put('/series/deshabilitar/:id', seriesController.disableSerie);
+router.put('/series/enable/:seireId', seriesController.enableSeries);
+router.put('/series/disable/:serieId', seriesController.disableSeries);
 
 //RUTAS FAVORITOS SERIES
 router.get('/favorites/:userId', favControllers.getFavoritesByUser);

@@ -255,30 +255,64 @@ const updateSeries = async (req, res) => {
 }
 
  //----Disable
-const disableSerie = async (req, res) => {
-  try {
-    const serieId = req.params.id;
-    const series = await loadSeriesFromDatabase();
-    const serie = series.find(serie => serie._id.toString() === serieId);
+ const enableSeries = async (req, res) => {
+  const { seriesId } = req.params;
 
-    if (!serie) {
+  try {
+    const client = await MongoClient.connect(mongoURL, { useUnifiedTopology: true });
+    const db = client.db(dbName);
+    const collection = db.collection(collectionName);
+
+    const series = await collection.findOne({ _id: new ObjectId(seriesId) });
+
+    if (!series) {
       res.status(404).json({ error: 'Serie no encontrada' });
       return;
     }
 
-    serie.deshabilitar = 'Disabled';
+    // Actualiza la serie en la base de datos para habilitarla
+    await collection.updateOne({ _id: new ObjectId(seriesId) }, { $set: { deshabilitar: null } });
 
-    const client = await MongoClient.connect(mongoURL, { useUnifiedTopology: true });
-    const db = client.db(dbName);
-    const collection = db.collection(collectionName);
-    await collection.updateOne({ _id: new ObjectId(serieId) }, { $set: { deshabilitar: 'Disabled' } });
+    const updatedSeries = await collection.findOne({ _id: new ObjectId(seriesId) });
 
-    res.json(serie);
+    res.status(200).json({ message: 'Serie habilitada exitosamente', updatedSeries });
+
     client.close();
   } catch (err) {
-    console.error('Error al deshabilitar la serie:', err);
+    console.error('Error al habilitar la serie:', err);
     res.status(500).send('Error interno del servidor');
   }
 };
 
-module.exports = { getSeries, getSeriesById, getSeriesByName, getTopSeries, postSeries,updateSeries, disableSerie };
+const disableSeries = async (req, res) => {
+  const { seriesId } = req.params;
+
+  try {
+    const client = await MongoClient.connect(mongoURL, { useUnifiedTopology: true });
+    const db = client.db(dbName);
+    const collection = db.collection(collectionName);
+
+    const series = await collection.findOne({ _id: new ObjectId(seriesId) });
+
+    if (!series) {
+      res.status(404).json({ error: 'Serie no encontrada' });
+      return;
+    }
+
+    // Actualiza la serie en la base de datos para deshabilitarla
+    await collection.updateOne({ _id: new ObjectId(seriesId) }, { $set: { deshabilitar: 'Disabled' } });
+
+    const updatedSeries = await collection.findOne({ _id: new ObjectId(seriesId) });
+
+    res.status(200).json({ message: 'Serie deshabilitada exitosamente', updatedSeries });
+
+    client.close();
+  } catch (err) {
+    console.error('Error al deshabilitar la serie:', err);
+    res.status(500).send('Error interno del servidor');
+  }
+};
+
+
+
+module.exports = { getSeries, getSeriesById, getSeriesByName, getTopSeries, postSeries,updateSeries, enableSeries, disableSeries };
