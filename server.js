@@ -67,7 +67,7 @@ app.use((req, res, next) => {
     'Access-Control-Allow-Headers',
     'Origin, X-Requested-With, Content-Type, Accept, Authorization'
   );
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PTIONS, PUT, DELETE');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE');
   next();
 });
 const moviesRoutes = require('./src/Routes/MoviesRoutes');
@@ -76,7 +76,7 @@ const userRoutes = require('./src/Routes/UserRoutes');
 const donationRoutes = require('./src/Routes/DonationRoutes')
 const notificationRoutes = require('./src/Routes/NotificationRoutes');
 const sugestionRoutes = require('./src/Routes/sugestionRoutes');
-
+const vistasRouter = require('./src/Routes/VistasRouter.js');
 
 app.use('/', moviesRoutes);
 app.use('/', seriesRoutes);
@@ -84,6 +84,7 @@ app.use('/', userRoutes);
 app.use('/', donationRoutes);
 app.use('/', notificationRoutes);
 app.use('/', sugestionRoutes);
+app.use('/', vistasRouter);
 
 app.listen(port, () => {
   console.log(`El servidor está escuchando en el puerto ${port}`);
