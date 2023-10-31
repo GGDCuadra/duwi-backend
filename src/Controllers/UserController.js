@@ -132,4 +132,37 @@ const getUserByEmail = async (req, res) => {
   }
 };
 
-module.exports = { getUsers, getUserById, createUser, updateUser, getUserByEmail };
+const enableUser = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const client = await MongoClient.connect(mongoURL, { useUnifiedTopology: true });
+    const db = client.db(dbName);
+    const collection = db.collection(collectionName);
+
+    await collection.updateOne({ _id: new ObjectId(id) }, { $set: { activo: true } });
+    res.status(200).json({ message: 'Usuario habilitado exitosamente' });
+    client.close();
+  } catch (err) {
+    console.error('Error al habilitar el usuario:', err);
+    res.status(500).send('Error interno del servidor');
+  }
+};
+
+const disableUser = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const client = await MongoClient.connect(mongoURL, { useUnifiedTopology: true });
+    const db = client.db(dbName);
+    const collection = db.collection(collectionName);
+
+    await collection.updateOne({ _id: new ObjectId(id) }, { $set: { activo: false } });
+    res.status(200).json({ message: 'Usuario deshabilitado exitosamente' });
+    client.close();
+  } catch (err) {
+    console.error('Error al deshabilitar el usuario:', err);
+    res.status(500).send('Error interno del servidor');
+  }
+};
+module.exports = { getUsers, getUserById, createUser, updateUser, getUserByEmail, enableUser, disableUser};
