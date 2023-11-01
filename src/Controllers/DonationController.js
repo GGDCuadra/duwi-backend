@@ -3,7 +3,7 @@ require('dotenv').config();
 const Donation = require('../Models/DonationModel')
 
 const { PAYPAL_CLIENT_ID, PAYPAL_CLIENT_SECRET } = process.env;
-const base = "https://api-m.sandbox.paypal.com";// Cambiar a 'https://api.paypal.com' para producción
+const base = 'https://api.paypal.com';// Cambiar a 'https://api.paypal.com' para producción y "https://api-m.sandbox.paypal.com" para desarrollo
 
 //Función encargada de obtener un token de acceso de PayPal. Se utiliza para autenticar las solicitudes a la API de PayPal.
 const generateAccessToken = async () => {

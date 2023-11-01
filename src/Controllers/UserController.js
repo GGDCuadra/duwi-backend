@@ -1,6 +1,6 @@
 const { MongoClient, ObjectId } = require('mongodb');
-
-const mongoURL = 'mongodb+srv://DBUSER:PF123@cluster0.x6eafwv.mongodb.net/DB_PF';
+const { mongoURL } = process.env;
+// const mongoURL = 'mongodb+srv://DBUSER:PF123@cluster0.x6eafwv.mongodb.net/DB_PF';
 const dbName = 'DB_PF';
 const collectionName = 'UserDb';
 
@@ -48,7 +48,6 @@ const getUserById = async (req, res) => {
       const db = client.db(dbName);
       const collection = db.collection(collectionName);
   
-      // Verifica si ya existe un usuario con el mismo correo electrónico
       const existingUser = await collection.findOne({ email: body.email });
       if (existingUser) {
         res.status(400).json({ message: 'El correo electrónico ya está registrado' });
@@ -66,7 +65,7 @@ const getUserById = async (req, res) => {
         rol: body.rol,
         activo: body.activo,
       };
-      
+  
       await collection.insertOne(user);
       res.status(201).json({ message: 'Usuario creado exitosamente' });
       client.close();
@@ -132,4 +131,37 @@ const getUserByEmail = async (req, res) => {
   }
 };
 
-module.exports = { getUsers, getUserById, createUser, updateUser, getUserByEmail };
+const enableUser = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const client = await MongoClient.connect(mongoURL, { useUnifiedTopology: true });
+    const db = client.db(dbName);
+    const collection = db.collection(collectionName);
+
+    await collection.updateOne({ _id: new ObjectId(id) }, { $set: { activo: true } });
+    res.status(200).json({ message: 'Usuario habilitado exitosamente' });
+    client.close();
+  } catch (err) {
+    console.error('Error al habilitar el usuario:', err);
+    res.status(500).send('Error interno del servidor');
+  }
+};
+
+const disableUser = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const client = await MongoClient.connect(mongoURL, { useUnifiedTopology: true });
+    const db = client.db(dbName);
+    const collection = db.collection(collectionName);
+
+    await collection.updateOne({ _id: new ObjectId(id) }, { $set: { activo: false } });
+    res.status(200).json({ message: 'Usuario deshabilitado exitosamente' });
+    client.close();
+  } catch (err) {
+    console.error('Error al deshabilitar el usuario:', err);
+    res.status(500).send('Error interno del servidor');
+  }
+};
+module.exports = { getUsers, getUserById, createUser, updateUser, getUserByEmail, enableUser, disableUser};
