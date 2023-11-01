@@ -1,6 +1,6 @@
 const { MongoClient, ObjectId } = require('mongodb');
-
-const mongoURL = 'mongodb+srv://DBUSER:PF123@cluster0.x6eafwv.mongodb.net/DB_PF';
+const { mongoURL } = process.env;
+// const mongoURL = 'mongodb+srv://DBUSER:PF123@cluster0.x6eafwv.mongodb.net/DB_PF';
 const dbName = 'DB_PF';
 const collectionName = 'UserDb';
 

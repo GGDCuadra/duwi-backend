@@ -1,16 +1,17 @@
 const nodemailer = require('nodemailer');
-const dotenv = require("dotenv");
-dotenv.conf
+require('dotenv').config();
+// const dotenv = require("dotenv");
+// dotenv.conf
 const { google } = require("googleapis");
+const { CLIENT_ID,CLIENT_SECRET,REDIRECT_URI,REFRESH_TOKEN } = process.env;
 
 
-
-const CLIENT_ID =
-  "711196659668-4226pmq6cvsi7r02updpsrq7un4dd03d.apps.googleusercontent.com";
-const CLIENT_SECRET = "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";
-const REDIRECT_URI = "https://developers.google.com/oauthplayground";
-const REFRESH_TOKEN =
-  "1//04ZkNhBSK1hh9CgYIARAAGAQSNwF-L9IrniFm0rM5d8OysTnq-C6sRNOLXmqx5H4tR4br27WNEf9tEH9Mb9cwMwwHAkYWD6aTcsg";
+// const CLIENT_ID =
+//   "711196659668-4226pmq6cvsi7r02updpsrq7un4dd03d.apps.googleusercontent.com";
+// const CLIENT_SECRET = "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";
+// const REDIRECT_URI = "https://developers.google.com/oauthplayground";
+// const REFRESH_TOKEN =
+//   "1//04ZkNhBSK1hh9CgYIARAAGAQSNwF-L9IrniFm0rM5d8OysTnq-C6sRNOLXmqx5H4tR4br27WNEf9tEH9Mb9cwMwwHAkYWD6aTcsg";
 
 const oAuth2Client = new google.auth.OAuth2(
   CLIENT_ID,

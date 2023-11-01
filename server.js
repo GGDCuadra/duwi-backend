@@ -1,4 +1,6 @@
 const express = require('express');
+require('dotenv').config();
+const { mongoURL } = process.env;
 const app = express();
 const port = process.env.PORT || 3001;
 const path = require('path');
@@ -55,7 +57,7 @@ app.use((req, res, next) => {
 //
 
 const mongoose = require('mongoose');
-mongoose.connect('mongodb+srv://DBUSER:PF123@cluster0.x6eafwv.mongodb.net/DB_PF', { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect(mongoURL, { useNewUrlParser: true, useUnifiedTopology: true });
 
 mongoose.connection.on('connected', () => {
   console.log('Conexión a MongoDB establecida');
