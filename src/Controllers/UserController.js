@@ -139,7 +139,7 @@ const enableUser = async (req, res) => {
     const db = client.db(dbName);
     const collection = db.collection(collectionName);
 
-    await collection.updateOne({ _id: new ObjectId(id) }, { $set: { activo: true } });
+    await collection.updateOne({ _id: new ObjectId(id) }, { $set: { activo: null } });
     res.status(200).json({ message: 'Usuario habilitado exitosamente' });
     client.close();
   } catch (err) {
@@ -164,4 +164,30 @@ const disableUser = async (req, res) => {
     res.status(500).send('Error interno del servidor');
   }
 };
-module.exports = { getUsers, getUserById, createUser, updateUser, getUserByEmail, enableUser, disableUser};
+
+const updateUserRole = async (req, res) => {
+  const { id } = req.params;
+  const { rol} = req.body;
+
+  try {
+    const client = await MongoClient.connect(mongoURL, { useUnifiedTopology: true });
+    const db = client.db(dbName);
+    const collection = db.collection(collectionName);
+    const existingUser = await collection.findOne({ _id: new ObjectId(id) });
+
+    if (!existingUser) {
+      res.status(404).json({ error: 'Usuario no encontrado' });
+      return;
+    }
+
+    await collection.updateOne({ _id: new ObjectId(id) }, { $set: { rol } });
+
+    res.status(200).json({ message: 'Rol de usuario actualizado exitosamente', rol});
+    client.close();
+  } catch (err) {
+    console.error('Error al actualizar el rol del usuario:', err);
+    res.status(500).send('Error interno del servidor');
+  }
+};
+
+module.exports = { getUsers, getUserById, createUser, updateUser, getUserByEmail, enableUser, disableUser, updateUserRole};
