@@ -47,7 +47,7 @@ const getUserById = async (req, res) => {
       const client = await MongoClient.connect(mongoURL, { useUnifiedTopology: true });
       const db = client.db(dbName);
       const collection = db.collection(collectionName);
-
+  
       const existingUser = await collection.findOne({ email: body.email });
       if (existingUser) {
         res.status(400).json({ message: 'El correo electrónico ya está registrado' });
@@ -65,7 +65,7 @@ const getUserById = async (req, res) => {
         rol: body.rol,
         activo: body.activo,
       };
-
+  
       await collection.insertOne(user);
       res.status(201).json({ message: 'Usuario creado exitosamente' });
       client.close();
