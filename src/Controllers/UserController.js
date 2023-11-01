@@ -190,4 +190,23 @@ const updateUserRole = async (req, res) => {
   }
 };
 
-module.exports = { getUsers, getUserById, createUser, updateUser, getUserByEmail, enableUser, disableUser, updateUserRole};
+const getUserRoles = async (req, res) => {
+  try {
+    const client = await MongoClient.connect(mongoURL, { useUnifiedTopology: true });
+    const db = client.db(dbName);
+    const collection = db.collection(collectionName);
+
+    // Obtén todos los usuarios y sus roles
+    const users = await collection.find({}).toArray();
+    const userRoles = users.map(user => ({ _id: user._id, rol: user.rol }));
+
+    client.close();
+
+    res.json(userRoles);
+  } catch (err) {
+    console.error('Error al obtener los roles de usuario:', err);
+    res.status(500).send('Error interno del servidor');
+  }
+};
+
+module.exports = { getUsers, getUserById, createUser, updateUser, getUserByEmail, enableUser, disableUser, updateUserRole, getUserRoles};
