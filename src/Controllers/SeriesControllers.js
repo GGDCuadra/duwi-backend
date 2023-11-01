@@ -377,5 +377,46 @@ const disableSerie = async (req, res) => {
   }
 };
 
+const getDisableSeries = async (req, res) => {
+  try {
 
-module.exports = { getSeries, getSeriesById, getSeriesByName, getTopSeries, postSeries,updateSeries, disableSerie, enableSerie, getAllSeries  };
+    const series = await loadSeriesFromDatabase();
+    const disableSeries = series.filter(serie => serie.deshabilitar === 'Disabled');
+
+    const mappedSeries = disableSeries.map(serie => {
+      return {
+        _id: serie._id,
+        url: serie.url,
+        name: serie.name,
+        type: serie.type,
+        language: serie.language,
+        genres: serie.genres.map(genre => genre), 
+        status: serie.status,
+        runtime: serie.runtime,
+        premiered: serie.premiered,
+        officialSite: serie.officialSite,
+        schedule: serie.schedule,
+        rating: serie.rating,
+        weight: serie.weight,
+        network: serie.network,
+        country: serie.country,
+        webChannel: serie.webChannel,
+        externals: serie.externals,
+        image: serie.image,
+        summary: serie.summary,
+        updated: serie.updated,
+        _links: serie._links,
+        self: serie._links.self.href, 
+        previousepisode: serie._links.previousepisode.href, 
+        deshabilitar: serie.deshabilitar,
+        Trailer: serie.Trailer
+      };
+    });
+
+    res.json(mappedSeries);
+  } catch (err) {
+    console.error('Error al obtener películas deshabilitadas:', err);
+    res.status(500).send('Error interno del servidor');
+  }
+};
+module.exports = { getSeries, getSeriesById, getSeriesByName, getTopSeries, postSeries,updateSeries, disableSerie, enableSerie, getAllSeries, getDisableSeries  };
