@@ -9,7 +9,7 @@ const postMovieVista = async (req, res) => {
     const client = await MongoClient.connect(mongoURL, { useUnifiedTopology: true });
     const db = client.db(dbName);
     const collection = db.collection('Moviesvistas'); // Nombre de la colección: Moviesvistas
-
+    const isExist = await collection.findOne({userId: body.userId, movieId: body.movieId})
     const movieVista = {
       userId: body.userId, 
       movieId: body.movieId, 
