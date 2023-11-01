@@ -3,13 +3,21 @@ const { MongoClient, ObjectId } = require('mongodb');
 const mongoURL = 'mongodb+srv://DBUSER:PF123@cluster0.x6eafwv.mongodb.net/DB_PF';
 const dbName = 'DB_PF';
 
+
 const postMovieVista = async (req, res) => {
   const { body } = req;
   try {
     const client = await MongoClient.connect(mongoURL, { useUnifiedTopology: true });
     const db = client.db(dbName);
-    const collection = db.collection('Moviesvistas'); // Nombre de la colección: Moviesvistas
+    const collection = db.collection('Moviesvistas'); 
+    const existingMoviecreada =  await collection.findOne({ userId: body.userId, movieId: body.movieId });
 
+    if (
+      existingMoviecreada
+    ){
+      return res.status(409).send("Ya existe una vistada a este video");
+    }
+      
     const movieVista = {
       userId: body.userId, 
       movieId: body.movieId, 
@@ -32,6 +40,13 @@ const postSerieVista = async (req, res) => {
     const client = await MongoClient.connect(mongoURL, { useUnifiedTopology: true });
     const db = client.db(dbName);
     const collection = db.collection('Seriesvistas'); // Nombre de la colección: Seriesvistas
+    const existingSeriecreada =  await collection.findOne({ userId: body.userId, serieId: body.serieId });
+
+    if (
+      existingSeriecreada
+    ){
+      return res.status(409).send("Ya existe una vistada a este video");
+    }
 
     const serieVista = {
       userId: body.userId,
