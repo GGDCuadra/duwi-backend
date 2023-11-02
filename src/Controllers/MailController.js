@@ -8,7 +8,7 @@ const CLIENT_ID =
 const CLIENT_SECRET = "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";
 const REDIRECT_URI = "https://developers.google.com/oauthplayground";
 const REFRESH_TOKEN =
-  "1//04ZkNhBSK1hh9CgYIARAAGAQSNwF-L9IrniFm0rM5d8OysTnq-C6sRNOLXmqx5H4tR4br27WNEf9tEH9Mb9cwMwwHAkYWD6aTcsg";
+  "1//04BZkKOAt80pkCgYIARAAGAQSNwF-L9IryOlCerXn4F6Gbzg9UUT8yBLkCpjTLfIeLQY1hhL7aWUzN4F5D_mu_grNmeeSj_1Z77k";
 
 const oAuth2Client = new google.auth.OAuth2(
   CLIENT_ID,
@@ -28,7 +28,7 @@ const transporter = nodemailer.createTransport({
     clientId: CLIENT_ID,
     clientSecret: CLIENT_SECRET,
     refreshToken: REFRESH_TOKEN,
-    accessToken: "ya29.a0AfB_byApZI1Mg0wRSXbwsgVsSBLaSi5XrWBx5gXGEuMPG7LSHhdzDGEw_QMMCyLwFhTfmvLFxKrUEVKxQ8jbTByiwd_rkq0-h_HHEModN-2qStzHLRPknJgxJ5PZiX0-NYX34R2C7vu_RgiIFk-R-wdeGkoqWAQ8vZ_daCgYKAXgSARASFQGOcNnC8MnBgyIPyyyEasgT--Q_VQ0171", // Puedes establecer esto en null por ahora
+    accessToken: "ya29.a0AfB_byDPmt20JHelacYl-4ssy_8VOp9hZC_JSRxj9B7PQIE9IF3GmQ4qHaJ_Ax38nAGZx3rjokjtR1PY-0Vz6rPZZfsg23AN5cG6KYxSlg1lWwSy35tv5r-j4yC91qAwdfo72W8I23OknsdYJD5pWfcrKaIKbG1d2hPraCgYKAVUSARASFQGOcNnCrh97bMrbiVGDiYpULucJaw0171", // Puedes establecer esto en null por ahora
   },
 });
 
@@ -307,7 +307,8 @@ const sendAccountDeletionNotification = async (req, res, ) => {
   }
 };
 
-const sendDonationNotification = async (req, res, ) => {
+const  sendDonationNotification = async (req, res, ) => {
+  console.log("Notificaion de donacion recibida");
   const { email, amount } = req.body;
   const mailOptions = {
     from: "pfmovieshenry@gmail.com",

@@ -54,7 +54,7 @@ const getUserById = async (req, res) => {
         client.close();
         return;
       }
-  
+
       const user = {
         credential: body.credential,
         imagen_de_perfil: body.imagen_de_perfil,

@@ -77,7 +77,8 @@ const donationRoutes = require('./src/Routes/DonationRoutes')
 const notificationRoutes = require('./src/Routes/NotificationRoutes');
 const sugestionRoutes = require('./src/Routes/sugestionRoutes');
 const vistasRouter = require('./src/Routes/VistasRouter.js');
-
+const raitingRoutes = require('./src/Routes/RaitingRoutes.js');
+app.use('/', raitingRoutes);
 app.use('/', moviesRoutes);
 app.use('/', seriesRoutes);
 app.use('/', userRoutes);
