@@ -1,6 +1,7 @@
 const { MongoClient } = require('mongodb');
-
-const mongoURL = 'mongodb+srv://DBUSER:PF123@cluster0.x6eafwv.mongodb.net/DB_PF';
+require('dotenv').config();
+const { mongoURL } = process.env;
+// const mongoURL = 'mongodb+srv://DBUSER:PF123@cluster0.x6eafwv.mongodb.net/DB_PF';
 const dbName = 'DB_PF';
 
 const postMovieRating = async (req, res) => {
