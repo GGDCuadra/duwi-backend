@@ -17,7 +17,7 @@ router.put('/series/:id', seriesController.updateSeries);
 router.put('/series/enable/:serieId', seriesController.enableSerie);
 router.put('/series/disable/:serieId', seriesController.disableSerie);
 router.get('/allseries', seriesController.getAllSeries);
-
+router.get('/disableSeries', seriesController.getDisableSeries);
 
 //RUTAS FAVORITOS SERIES
 router.get('/favorites/:userId', favControllers.getFavoritesByUser);
