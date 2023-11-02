@@ -164,4 +164,52 @@ const disableUser = async (req, res) => {
     res.status(500).send('Error interno del servidor');
   }
 };
-module.exports = { getUsers, getUserById, createUser, updateUser, getUserByEmail, enableUser, disableUser};
+
+
+const updateUserRole = async (req, res) => {
+  const { id } = req.params;
+  const { rol} = req.body;
+
+  try {
+    const client = await MongoClient.connect(mongoURL, { useUnifiedTopology: true });
+    const db = client.db(dbName);
+    const collection = db.collection(collectionName);
+    const existingUser = await collection.findOne({ _id: new ObjectId(id) });
+
+    if (!existingUser) {
+      res.status(404).json({ error: 'Usuario no encontrado' });
+      return;
+    }
+
+    await collection.updateOne({ _id: new ObjectId(id) }, { $set: { rol } });
+
+    res.status(200).json({ message: 'Rol de usuario actualizado exitosamente', rol});
+    client.close();
+  } catch (err) {
+    console.error('Error al actualizar el rol del usuario:', err);
+    res.status(500).send('Error interno del servidor');
+  }
+};
+
+const getUserRoles = async (req, res) => {
+  try {
+    const client = await MongoClient.connect(mongoURL, { useUnifiedTopology: true });
+    const db = client.db(dbName);
+    const collection = db.collection(collectionName);
+
+    // Obtén todos los usuarios y sus roles
+    const users = await collection.find({}).toArray();
+    const userRoles = users.map(user => ({ _id: user._id, rol: user.rol }));
+
+    client.close();
+
+    res.json(userRoles);
+  } catch (err) {
+    console.error('Error al obtener los roles de usuario:', err);
+    res.status(500).send('Error interno del servidor');
+  }
+};
+
+
+
+module.exports = { getUsers, getUserById, createUser, updateUser, getUserByEmail, enableUser, disableUser, updateUserRole, getUserRoles};
